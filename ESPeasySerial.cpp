@@ -317,10 +317,10 @@ unsigned long ESPeasySerial::detectBaudrate(time_t timeoutMillis) {
   if (!isValid() || isSWserial()) {
     return 0;
   }
-#ifndef ARDUINO_ESP8266_RELEASE_2_4_1
-  return getHW()->detectBaudrate(timeoutMillis);
-#else
+#if defined(ARDUINO_ESP8266_RELEASE_2_4_0) || defined(ARDUINO_ESP8266_RELEASE_2_4_1)
   return 0;
+#else
+  return getHW()->detectBaudrate(timeoutMillis);
 #endif
 }
 
