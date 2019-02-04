@@ -130,7 +130,9 @@ public:
   // Serial1:         RX: -- TX: 2   (TX only)
   ESPeasySerial(int receivePin, int transmitPin, bool inverse_logic = false, unsigned int buffSize = 64);
   virtual ~ESPeasySerial();
-  void begin(unsigned long baud, SerialConfig config=SERIAL_8N1, SerialMode mode=SERIAL_FULL, uint8_t tx_pin=1);
+
+  // If baud rate is set to 0, it will perform an auto-detect on the baudrate
+  void begin(unsigned long baud, SerialConfig config=SERIAL_8N1, SerialMode mode=SERIAL_FULL);
 #endif
 
 
@@ -145,6 +147,8 @@ public:
   // @param  serialPort can be a helper to suggest the set serial port. (is needed to define Serial1)
   ESPeasySerial(int receivePin, int transmitPin, bool inverse_logic = false, int serialPort = -1);
   virtual ~ESPeasySerial();
+
+  // If baud rate is set to 0, it will perform an auto-detect on the baudrate
   void begin(unsigned long baud, uint32_t config=SERIAL_8N1, int8_t rxPin=-1, int8_t txPin=-1, bool invert=false, unsigned long timeout_ms = 20000UL);
 #endif
 
@@ -180,7 +184,7 @@ public:
   int baudRate(void);
 
 #if defined(ESP8266)
-  void swap() { swap(1); }
+  void swap() { swap(_transmitPin); }
   void swap(uint8_t tx_pin);
   size_t readBytes(char* buffer, size_t size) override;
   size_t readBytes(uint8_t* buffer, size_t size) override;
@@ -215,6 +219,10 @@ private:
   HardwareSerial* getHW();
 
   bool isValid() const;
+
+#ifdef ESP8266
+  bool doHWbegin(unsigned long baud, SerialConfig config, SerialMode mode);
+#endif
 
 #if !defined(DISABLE_SOFTWARE_SERIAL) && defined(ESP8266)
   bool isSWserial() const { return _serialtype == ESPeasySerialType::serialtype::software; }
