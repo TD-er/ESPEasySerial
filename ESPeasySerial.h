@@ -43,7 +43,7 @@
   # define NR_ESPEASY_SERIAL_TYPES 3 // Serial 0, 1, 2
 #endif // ifdef ESP32
 #if !defined(DISABLE_SOFTWARE_SERIAL) && defined(ESP8266)
-  # define NR_ESPEASY_SERIAL_TYPES 4 // Serial 0, 1, 0_swap, software
+  # define NR_ESPEASY_SERIAL_TYPES 5 // Serial 0, 1, 0_swap, software, sc16is752
 #else // if !defined(DISABLE_SOFTWARE_SERIAL) && defined(ESP8266)
   # define NR_ESPEASY_SERIAL_TYPES 3 // Serial 0, 1, 0_swap
 #endif // if !defined(DISABLE_SOFTWARE_SERIAL) && defined(ESP8266)
@@ -95,9 +95,10 @@
 #endif // ifndef ESP32_SER2_RX
 
 struct ESPeasySerialType {
+  // Keep value assigned as it is used in scripts
   enum serialtype {
     software = 0,
-    sc16is752,
+    sc16is752 = 1,
     serial0,
     serial0_swap,
     serial1,
@@ -125,6 +126,8 @@ struct ESPeasySerialType {
       case ESPeasySerialType::serialtype::software:      rxPin = 14; txPin = 12; return true;
     # endif // DISABLE_SOFTWARE_SERIAL
 #endif // ifdef ESP8266
+      case ESPeasySerialType::serialtype::sc16is752:     rxPin = -1; txPin = -1; return true;
+
       default:
         break;
     }
@@ -147,7 +150,7 @@ struct ESPeasySerialType {
       return serialtype::serial2; // UART2
     }
 
-    if ((receivePin >= 0x90) && (receivePin <= 0xAE)) {
+    if ((receivePin >= 0x48) && (receivePin <= 0x57)) {
       return serialtype::sc16is752; // I2C address range of SC16IS752
     }
 
@@ -175,7 +178,7 @@ struct ESPeasySerialType {
       return serialtype::serial1;
     }
 
-    if ((receivePin >= 0x90) && (receivePin <= 0xAE)) {
+    if ((receivePin >= 0x48) && (receivePin <= 0x57)) {
       return serialtype::sc16is752; // I2C address range of SC16IS752
     }
 
