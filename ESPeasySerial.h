@@ -40,7 +40,7 @@
 #endif // ifndef DISABLE_SOFTWARE_SERIAL
 
 #ifdef ESP32
-  # define NR_ESPEASY_SERIAL_TYPES 3 // Serial 0, 1, 2
+  # define NR_ESPEASY_SERIAL_TYPES 4 // Serial 0, 1, 2, sc16is752
 #endif // ifdef ESP32
 #if !defined(DISABLE_SOFTWARE_SERIAL) && defined(ESP8266)
   # define NR_ESPEASY_SERIAL_TYPES 5 // Serial 0, 1, 0_swap, software, sc16is752
