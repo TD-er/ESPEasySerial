@@ -4,32 +4,6 @@
 #define DETECT_BAUDATE_TIMEOUT     250
 
 
-String ESPeasySerial::getLogString() const {
-  String log;
-
-  log.reserve(48);
-  log = "ESPEasy serial: ";
-
-  if (isI2Cserial()) {
-    log += "I2C: addr:";
-    log += String(_receivePin);
-    log += " ch:";
-    log += _transmitPin == 0 ? "A" : "B";
-  } else {
-    if (isSWserial()) {
-      log += "SW";
-    } else {
-      log += "HW";
-    }
-    log += ": rx:";
-    log += String(_receivePin);
-    log += " tx:";
-    log += String(_transmitPin);
-  }
-  log += " baud:";
-  log += String(_baud);
-  return log;
-}
 
 // ****************************************
 // ESP8266 implementation wrapper
