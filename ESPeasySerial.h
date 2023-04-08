@@ -28,8 +28,8 @@
 #include <inttypes.h>
 #include <Stream.h>
 #ifndef DISABLE_SC16IS752_Serial
-#include <ESPEasySC16IS752_Serial.h>
-#endif
+# include <ESPEasySC16IS752_Serial.h>
+#endif // ifndef DISABLE_SC16IS752_Serial
 
 #if defined(ARDUINO_ESP8266_RELEASE_2_3_0) || defined(ESP32)
   # ifndef DISABLE_SOFTWARE_SERIAL
@@ -42,15 +42,35 @@
 #endif // ifndef DISABLE_SOFTWARE_SERIAL
 
 #ifdef ESP32
-  # define NR_ESPEASY_SERIAL_TYPES 4 // Serial 0, 1, 2, sc16is752
+  # ifndef DISABLE_SC16IS752_Serial
+    #  ifndef ESP32S2
+    #   define NR_ESPEASY_SERIAL_TYPES 4 // Serial 0, 1, 2, sc16is752
+    #  else // ifndef ESP32S2
+    #   define NR_ESPEASY_SERIAL_TYPES 3 // Serial 0, 1, sc16is752
+    #  endif // ifndef ESP32S2
+  # else // ifndef DISABLE_SC16IS752_Serial
+    #  ifndef ESP32S2
+    #   define NR_ESPEASY_SERIAL_TYPES 3 // Serial 0, 1, 2
+    #  else // ifndef ESP32S2
+    #   define NR_ESPEASY_SERIAL_TYPES 2 // Serial 0, 1
+    #  endif // ifndef ESP32S2
+  # endif // ifndef DISABLE_SC16IS752_Serial
 #endif // ifdef ESP32
 #ifdef ESP8266
-  #if !defined(DISABLE_SOFTWARE_SERIAL)
-    # define NR_ESPEASY_SERIAL_TYPES 5 // Serial 0, 1, 0_swap, software, sc16is752
-  #else // if !defined(DISABLE_SOFTWARE_SERIAL)
-    # define NR_ESPEASY_SERIAL_TYPES 3 // Serial 0, 1, 0_swap
-  #endif // if !defined(DISABLE_SOFTWARE_SERIAL)
-#endif
+  # if !defined(DISABLE_SOFTWARE_SERIAL)
+    #  ifndef DISABLE_SC16IS752_Serial
+      #   define NR_ESPEASY_SERIAL_TYPES 5 // Serial 0, 1, 0_swap, software, sc16is752
+    #  else // ifndef DISABLE_SC16IS752_Serial
+      #   define NR_ESPEASY_SERIAL_TYPES 4 // Serial 0, 1, 0_swap, software
+    #  endif // ifndef DISABLE_SC16IS752_Serial
+  # else // if !defined(DISABLE_SOFTWARE_SERIAL)
+    #  ifndef DISABLE_SC16IS752_Serial
+      #   define NR_ESPEASY_SERIAL_TYPES 4 // Serial 0, 1, 0_swap, sc16is752
+    #  else // ifndef DISABLE_SC16IS752_Serial
+      #   define NR_ESPEASY_SERIAL_TYPES 3 // Serial 0, 1, 0_swap
+    #  endif // ifndef DISABLE_SC16IS752_Serial
+  # endif // if !defined(DISABLE_SOFTWARE_SERIAL)
+#endif // ifdef ESP8266
 
 #ifndef ESP32
   # if defined(ARDUINO_ESP8266_RELEASE_2_4_0) || defined(ARDUINO_ESP8266_RELEASE_2_4_1)  || defined(ARDUINO_ESP8266_RELEASE_2_4_2)
@@ -81,7 +101,6 @@
 #include "ESPEasySerialType.h"
 
 
-
 class ESPeasySerial : public Stream {
 public:
 
@@ -92,12 +111,12 @@ public:
   // Serial0 swapped  RX: 13 TX: 15
   // Serial1:         RX: -- TX: 2   (TX only)
   // SC16IS752:       Rx: I2C addr  TX: channel (A = 0, B = 1)
-  ESPeasySerial(ESPEasySerialPort         port, 
-                int          receivePin,
-                int          transmitPin,
-                bool         inverse_logic = false,
-                unsigned int buffSize      = 64,
-                bool         forceSWserial = false);
+  ESPeasySerial(ESPEasySerialPort port,
+                int               receivePin,
+                int               transmitPin,
+                bool              inverse_logic = false,
+                unsigned int      buffSize      = 64,
+                bool              forceSWserial = false);
   virtual ~ESPeasySerial();
 
   // If baud rate is set to 0, it will perform an auto-detect on the baudrate
@@ -117,11 +136,11 @@ public:
   // @param  inverse_logic can be used to set the logic in the constructor which will then be used in the call to begin.
   //         This makes the call to the constructor more in line with the constructor of SoftwareSerial.
   // buffsize is for compatibility reasons. ESP32 cannot set the buffer size.
-  ESPeasySerial(ESPEasySerialPort port, 
-                int  receivePin,
-                int  transmitPin,
-                bool inverse_logic = false,
-                unsigned int buffSize      = 64);
+  ESPeasySerial(ESPEasySerialPort port,
+                int               receivePin,
+                int               transmitPin,
+                bool              inverse_logic = false,
+                unsigned int      buffSize      = 64);
   virtual ~ESPeasySerial();
 
   // If baud rate is set to 0, it will perform an auto-detect on the baudrate
@@ -177,7 +196,7 @@ public:
                           size_t   size) override;
 
   void          setDebugOutput(bool);
-#endif
+#endif // if defined(ESP8266)
 
   bool          isTxEnabled(void);
   bool          isRxEnabled(void);
@@ -240,10 +259,10 @@ private:
   bool isI2Cserial() const {
     return _serialtype == ESPEasySerialPort::sc16is752;
   }
-  
+
 #ifndef DISABLE_SC16IS752_Serial
   ESPEasySC16IS752_Serial *_i2cserial = nullptr;
-#endif
+#endif // ifndef DISABLE_SC16IS752_Serial
 
 #if !defined(DISABLE_SOFTWARE_SERIAL) && defined(ESP8266)
   bool isSWserial() const {
