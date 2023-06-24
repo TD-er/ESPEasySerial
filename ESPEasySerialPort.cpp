@@ -1,6 +1,6 @@
 #include "ESPEasySerialPort.h"
 
-const __FlashStringHelper* ESPEasySerialPort_toString(ESPEasySerialPort , bool shortName)
+const __FlashStringHelper* ESPEasySerialPort_toString(ESPEasySerialPort port, bool shortName)
 {
   switch (port) {
     case ESPEasySerialPort::not_set:         break;
@@ -18,7 +18,7 @@ const __FlashStringHelper* ESPEasySerialPort_toString(ESPEasySerialPort , bool s
     case ESPEasySerialPort::serial2:         return shortName ? F("serial2") : F("HW Serial2");
 #endif // if SOC_UART_NUM > 2
 #if USES_SW_SERIAL
-    case ESPEasySerialPort::software:        return shortName ? F("serial") : F("SW Serial");
+    case ESPEasySerialPort::software:        return shortName ? F("serialsw") : F("SW Serial");
 #endif // if USES_SW_SERIAL
 #if USES_HWCDC
     case ESPEasySerialPort::usb_hw_cdc:      return shortName ? F("serialhwcdc") : F("USB HWCDC");
